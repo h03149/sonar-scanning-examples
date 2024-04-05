@@ -38,9 +38,7 @@ pipeline {
                         sh './gradlew sonarqube \
                         -Dsonar.projectKey=module2Key \
                         -Dsonar.projectName="Module 2" \
-                        -Dsonar.sources="src/main/java" \
-                        -Dsonar.tests="src/test/java" \
-                        -Dsonar.java.binaries=build/classes/java/main'
+                        -Dsonar.gradle.skipCompile="true"'
                     }
                 }
 /*

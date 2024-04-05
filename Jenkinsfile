@@ -35,7 +35,10 @@ pipeline {
 
                 dir('sonar-scanner-gradle/gradle-kotlin-dsl') {
                     withSonarQubeEnv('SonarQube Server') {
-                        sh './gradlew sonarqube -Dsonar.projectKey=module2Key -Dsonar.projectName="Module 2"'
+                        sh './gradlew sonarqube \
+                        -Dsonar.projectKey=module2Key \
+                        -Dsonar.projectName="Module 2" \
+                        -Dsonar.gradle.skipCompile="true'
                     }
                 }
 /*

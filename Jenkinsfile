@@ -28,11 +28,13 @@ pipeline {
                 /*
                 dir('sonar-scanner-gradle/gradle-basic') {
                     withSonarQubeEnv('SonarQube Server') {
-                        sh './gradlew sonarqube -Dsonar.projectKey=module1Key -Dsonar.projectName="Module 1"'
+                        sh './gradlew clean build jacocoTestReport \
+                        -Dsonar.projectKey=module1Key \
+                        -Dsonar.projectName="Module 1" sonarqube '
                     }
                 }
                 */
-
+/*
                 dir('sonar-scanner-gradle/gradle-kotlin-dsl') {
                     withSonarQubeEnv('SonarQube Server') {
                         sh './gradlew clean build jacocoTestReport \
@@ -40,13 +42,16 @@ pipeline {
                         -Dsonar.projectName="Module 2" sonarqube '
                     }
                 }
-/*
+                */
+
                 dir('sonar-scanner-gradle/gradle-multimodule-coverage') {
                     withSonarQubeEnv('SonarQube Server') {
-                        sh './gradlew sonarqube -Dsonar.projectKey=module3Key -Dsonar.projectName="Module 3"'
+                        sh './gradlew clean build jacocoTestReport \
+                        -Dsonar.projectKey=module3Key \
+                        -Dsonar.projectName="Module 3" sonarqube '
                     }
                 }
-*/
+
 /*
                 dir('sonar-scanner-gradle/gradle-multimodule') {
                     withSonarQubeEnv('SonarQube Server') {

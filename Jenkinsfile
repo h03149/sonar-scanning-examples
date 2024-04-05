@@ -25,7 +25,7 @@ pipeline {
                 */
                 
                 // Gradle 프로젝트 스캔
-                /*
+                
                 dir('sonar-scanner-gradle/gradle-basic') {
                     withSonarQubeEnv('SonarQube Server') {
                         sh './gradlew clean build jacocoTestReport \
@@ -33,8 +33,6 @@ pipeline {
                         -Dsonar.projectName="Module 1" sonarqube '
                     }
                 }
-                */
-/*
                 dir('sonar-scanner-gradle/gradle-kotlin-dsl') {
                     withSonarQubeEnv('SonarQube Server') {
                         sh './gradlew clean build jacocoTestReport \
@@ -42,9 +40,8 @@ pipeline {
                         -Dsonar.projectName="Module 2" sonarqube '
                     }
                 }
-                */
 
-                dir('sonar-scanner-gradle/gradle-multimodule-coverage') {
+                dir('sonar-scanner-gradle/gradle-multimodule') {
                     withSonarQubeEnv('SonarQube Server') {
                         sh './gradlew clean build jacocoTestReport \
                         -Dsonar.projectKey=module3Key \
@@ -52,13 +49,15 @@ pipeline {
                     }
                 }
 
-/*
-                dir('sonar-scanner-gradle/gradle-multimodule') {
+                dir('sonar-scanner-gradle/gradle-multimodule-coverage') {
                     withSonarQubeEnv('SonarQube Server') {
-                        sh './gradlew sonarqube -Dsonar.projectKey=module4Key -Dsonar.projectName="Module 4"'
+                        sh './gradlew clean build jacocoTestReport \
+                        -Dsonar.projectKey=module4Key \
+                        -Dsonar.projectName="Module 4" sonarqube '
                     }
                 }
-*/
+
+
                 /*
                 // Docker 프로젝트 소스 코드 스캔
                 dir('dockerProject') {

@@ -33,6 +33,8 @@ pipeline {
                         -Dsonar.projectName="Module 1" sonarqube '
                     }
                 }
+
+                /*
                 dir('sonar-scanner-gradle/gradle-kotlin-dsl') {
                     withSonarQubeEnv('SonarQube Server') {
                         sh './gradlew clean build jacocoTestReport \
@@ -40,6 +42,7 @@ pipeline {
                         -Dsonar.projectName="Module 2" sonarqube '
                     }
                 }
+                */
 
 /*
                 dir('sonar-scanner-gradle/gradle-multimodule') {

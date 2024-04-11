@@ -41,6 +41,7 @@ pipeline {
                     }
                 }
 
+/*
                 dir('sonar-scanner-gradle/gradle-multimodule') {
                     withSonarQubeEnv('SonarQube Server') {
                         sh './gradlew clean build jacocoTestReport \
@@ -57,7 +58,7 @@ pipeline {
                     }
                 }
 
-
+*/
                 /*
                 // Docker 프로젝트 소스 코드 스캔
                 dir('dockerProject') {

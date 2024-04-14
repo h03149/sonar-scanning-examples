@@ -7,7 +7,7 @@ pipeline {
         MVN_HOME = tool 'Jenkins_Maven_3_9_6'  // Jenkins에서 설정한 Maven 설치의 이름입니다.
         REDMINE_API_KEY = credentials('redmine-api-key')
         REDMINE_URL = 'http://192.168.35.209:3000'
-        SONARQUBE_API_KEY = credentials('sonarqube_token')
+        SONARQUBE_API_KEY = credentials('sonarqube-api-key')
         SONARQUBE_HOST = 'http://192.168.35.209:9001'
     }
     stages {
@@ -105,19 +105,14 @@ pipeline {
                     def buildStatus = currentBuild.result ?: 'SUCCESS'
 
                     // SonarQube 결과 가져오기
-                    echo 'test1'
                     def sonarQubeResults = httpRequest(
                         url: "${SONARQUBE_HOST}/api/measures/component?component=MavenModule1Key&metricKeys=ncloc,complexity,violations",
                         authentication: SONARQUBE_API_KEY,
                         acceptType: 'APPLICATION_JSON'
                     ).content
-                    echo 'test2'
                     def jsonSlurper = new JsonSlurper()
-                    echo 'test3'
                     def sonarResultData = jsonSlurper.parseText(sonarQubeResults)
-                    echo 'test4'
                     def metrics = sonarResultData.component.measures.collectEntries { [(it.metric): it.value] }
-                    echo 'test5'
 
                     def description = """
                     Build status: ${buildStatus}

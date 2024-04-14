@@ -4,7 +4,7 @@ import groovy.json.JsonSlurper
 def parseJson(String jsonStr) {
     def jsonSlurper = new groovy.json.JsonSlurper()
     def object = jsonSlurper.parseText(jsonStr)
-    return new HashMap<>(object) // LazyMap을 HashMap으로 변환
+    return [status: object.projectStatus.status, conditions: object.projectStatus.conditions]  // 필요한 정보만 추출
 }
 
 pipeline {
@@ -102,6 +102,7 @@ pipeline {
                 */
             }
         }
+
         stage('Report to Redmine') {
             steps {
                 script {
@@ -113,8 +114,8 @@ pipeline {
 
                         def jsonResponse = parseJson(response)
                         
-                        def issueTitle = jsonResponse.projectStatus.status == 'ERROR' ? "Code Quality Gate Failed for ${moduleKey}" : "Code Quality Gate Passed for ${moduleKey}"
-                        def issueDescription = "The SonarQube quality gate result for module ${moduleKey} was: ${jsonResponse.projectStatus.status}. Check the SonarQube dashboard for more details."
+                        def issueTitle = jsonResponse.status == 'ERROR' ? "Code Quality Gate Failed for ${moduleKey}" : "Code Quality Gate Passed for ${moduleKey}"
+                        def issueDescription = "The SonarQube quality gate result for module ${moduleKey} was: ${jsonResponse.status}. Check the SonarQube dashboard for more details."
 
                         sh """
                         curl -X POST http://192.168.35.209:3000/issues.json \\

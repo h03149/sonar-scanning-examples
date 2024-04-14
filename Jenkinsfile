@@ -107,7 +107,7 @@ pipeline {
                     // SonarQube 결과 가져오기
                     def sonarQubeResults = httpRequest(
                         url: "${env.SONARQUBE_HOST}/api/measures/component?component=${env.SONAR_PROJECT_KEY}&metricKeys=ncloc,complexity,violations",
-                        authentication: 'sonarqube-api-key',
+                        authentication: env.SONARQUBE_API_KEY,
                         acceptType: 'APPLICATION_JSON'
                     ).content
                     def jsonSlurper = new JsonSlurper()

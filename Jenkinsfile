@@ -1,11 +1,11 @@
-import groovy.json.JsonOutput
-import groovy.json.JsonSlurper
+//import groovy.json.JsonOutput
+//import groovy.json.JsonSlurper
 
 pipeline {
     agent any
     environment {
         MVN_HOME = tool 'Jenkins_Maven_3_9_6'  // Jenkins에서 설정한 Maven 설치의 이름입니다.
-        REDMINE_API_KEY = credentials('redmine-api-key')
+ //       REDMINE_API_KEY = credentials('redmine-api-key')
     }
     stages {
         stage('Checkout') {
@@ -121,7 +121,7 @@ pipeline {
             }
         }
         */
-        
+        /*
         stage('Redmine Issue Creation') {
             steps {
                 script {
@@ -143,7 +143,7 @@ pipeline {
                 }
             }
         }
-
+*/
         
 /*
         stage('Report to Redmine') {

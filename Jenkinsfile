@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    environment {
+        MVN_HOME = tool 'Jenkins_Maven_3_9_6'  // 여기서 'Maven_3_6_3'는 Jenkins에서 설정한 Maven 설치의 이름입니다.
+    }
     stages {
         stage('Checkout') {
             steps {
@@ -14,7 +16,7 @@ pipeline {
                 
                 dir('sonar-scanner-maven/maven-basic') {
                     withSonarQubeEnv('SonarQube Server') {
-                        sh 'mvn clean verify sonar:sonar \
+                        sh '${MVN_HOME}/bin/mvn clean verify sonar:sonar \
                         -Dsonar.projectKey=MavenModule1Key \
                         -Dsonar.projectName="MavenModule1"'
                     }

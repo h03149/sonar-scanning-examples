@@ -106,8 +106,8 @@ pipeline {
 
                     // SonarQube 결과 가져오기
                     def sonarQubeResults = httpRequest(
-                        url: "${env.SONARQUBE_HOST}/api/measures/component?component=MavenModule1Key&metricKeys=ncloc,complexity,violations",
-                        authentication: env.SONARQUBE_API_KEY,
+                        url: "${SONARQUBE_HOST}/api/measures/component?component=MavenModule1Key&metricKeys=ncloc,complexity,violations",
+                        authentication: SONARQUBE_API_KEY,
                         acceptType: 'APPLICATION_JSON'
                     ).content
                     def jsonSlurper = new JsonSlurper()
@@ -120,7 +120,7 @@ pipeline {
                     - Lines of Code: ${metrics.ncloc}
                     - Complexity: ${metrics.complexity}
                     - Violations: ${metrics.violations}
-                    View more details at ${env.SONARQUBE_HOST}/dashboard?id=MavenModule1Key
+                    View more details at ${SONARQUBE_HOST}/dashboard?id=MavenModule1Key
                     """
 
                     // Redmine 이슈 생성 요청

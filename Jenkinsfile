@@ -110,7 +110,7 @@ pipeline {
                         if (response) {
                             def jsonResponse = new groovy.json.JsonSlurper().parseText(response)
                             
-                            if (jsonResponse.projectStatus.status == 'ERROR') {
+                            //if (jsonResponse.projectStatus.status == 'ERROR') {
                                 def issueTitle = "Code Quality Gate Failed for ${moduleKey}"
                                 def issueDescription = "The SonarQube quality gate has failed for module ${moduleKey}. Check the SonarQube dashboard for more details."
             
@@ -120,7 +120,7 @@ pipeline {
                                     -H 'X-Redmine-API-Key: ${env.REDMINE_API_KEY}' \\
                                     -d '{"issue": {"project_id": "testproject", "subject": "${issueTitle}", "description": "${issueDescription}"}}'
                                 """
-                            }
+                            //}
                         } else {
                             echo "API 호출 결과가 비어 있습니다."
                         }

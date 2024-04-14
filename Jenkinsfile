@@ -95,6 +95,31 @@ pipeline {
                 */
             }
         }
+        stage('Check Quality Gate') {
+            steps {
+                script {
+                    def sonarqubeProject = 'MavenModule1Key'
+                    def sonarHostUrl = 'http://192.168.35.209:9001'
+                    def sonarToken = 'squ_4b478dc39ed1b28a070184cef8cf1f9490e15ada'
+                    def response = sh(script: "curl -u ${sonarToken}: '${sonarHostUrl}/api/qualitygates/project_status?projectKey=${sonarqubeProject}'", returnStdout: true).trim()
+                    def jsonResponse = new groovy.json.JsonSlurper().parseText(response)
+        
+                    if (jsonResponse.projectStatus.status == 'ERROR') {
+                        def issueTitle = "Code Quality Gate Failed for ${env.JOB_NAME}"
+                        def issueDescription = "The SonarQube quality gate has failed for the build ${env.BUILD_NUMBER}. Check the SonarQube dashboard for more details."
+                        
+                        sh """
+                        curl -X POST http://your-redmine-site/issues.json \\
+                            -H 'Content-Type: application/json' \\
+                            -H 'X-Redmine-API-Key: ${env.REDMINE_API_KEY}' \\
+                            -d '{"issue": {"project_id": "your-project-id", "subject": "${issueTitle}", "description": "${issueDescription}"}}'
+                        """
+                    }
+                }
+            }
+        }
+
+        /*
         stage('Redmine Issue Creation') {
             steps {
                 script {
@@ -116,6 +141,8 @@ pipeline {
                 }
             }
         }
+
+        */
 /*
         stage('Report to Redmine') {
             steps {

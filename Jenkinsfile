@@ -104,7 +104,7 @@ pipeline {
                     def response = sh(script: "curl -u ${sonarToken}: '${sonarHostUrl}/api/qualitygates/project_status?projectKey=${sonarqubeProject}'", returnStdout: true).trim()
                     def jsonResponse = new groovy.json.JsonSlurper().parseText(response)
         
-                    if (jsonResponse.projectStatus.status == 'ERROR') {
+             //       if (jsonResponse.projectStatus.status == 'ERROR') {
                         def issueTitle = "Code Quality Gate Failed for ${env.JOB_NAME}"
                         def issueDescription = "The SonarQube quality gate has failed for the build ${env.BUILD_NUMBER}. Check the SonarQube dashboard for more details."
                         
@@ -114,7 +114,7 @@ pipeline {
                             -H 'X-Redmine-API-Key: ${env.REDMINE_API_KEY}' \\
                             -d '{"issue": {"project_id": "testproject", "subject": "${issueTitle}", "description": "${issueDescription}"}}'
                         """
-                    }
+            //        }
                 }
             }
         }

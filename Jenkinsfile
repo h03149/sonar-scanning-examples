@@ -102,18 +102,19 @@ pipeline {
         stage('Report to Redmine') {
             steps {
                 script {
-                    def buildStatus = currentBuild.result ?: 'SUCCESS'
-
-                    // SonarQube 결과 가져오기
-                    def sonarQubeResults = httpRequest(
-                        url: "${SONARQUBE_HOST}/api/measures/component?component=MavenModule1Key&metricKeys=ncloc,complexity,violations",
-                        authentication: SONARQUBE_API_KEY,
-                        acceptType: 'APPLICATION_JSON'
-                    ).content
+                    // curl을 사용하여 SonarQube API 호출
+                    def sonarQubeResults = sh(script: """
+                        curl -X GET -H "Authorization: Token ${env.SONARQUBE_API_KEY}" \\
+                            "${env.SONARQUBE_HOST}/api/measures/component?component=MavenModule1Key&metricKeys=ncloc,complexity,violations"
+                    """, returnStdout: true).trim()
+                    
                     def jsonSlurper = new JsonSlurper()
                     def sonarResultData = jsonSlurper.parseText(sonarQubeResults)
                     def metrics = sonarResultData.component.measures.collectEntries { [(it.metric): it.value] }
-
+                    
+                    echo "SonarQube Results: NCLOC: ${metrics.ncloc}, Complexity: ${metrics.complexity}, Violations: ${metrics.violations}"
+                    
+                    // Redmine 이슈 생성 요청
                     def description = """
                     Build status: ${buildStatus}
                     SonarQube analysis:
@@ -122,23 +123,23 @@ pipeline {
                     - Violations: ${metrics.violations}
                     View more details at ${SONARQUBE_HOST}/dashboard?id=MavenModule1Key
                     """
-
-                    // Redmine 이슈 생성 요청
-                    httpRequest(
-                        url: "${REDMINE_URL}/issues.json",
-                        httpMode: 'POST',
-                        contentType: 'APPLICATION_JSON',
-                        acceptType: 'APPLICATION_JSON',
-                        requestBody: JsonOutput.toJson([
-                            issue: [
-                                project_id: "testproject",
-                                subject: "Build and Analysis Report",
-                                description: description,
-                                status_id: buildStatus == 'SUCCESS' ? '3' : '5'
-                            ]
-                        ]),
-                        customHeaders: [[name: 'X-Redmine-API-Key', value: REDMINE_API_KEY]]
-                    )
+                
+                    def jsonRequestBody = JsonOutput.toJson([
+                        issue: [
+                            project_id: "testproject",
+                            subject: "Build and Analysis Report",
+                            description: description,
+                            status_id: buildStatus == 'SUCCESS' ? '3' : '5'
+                        ]
+                    ])
+                
+                    // curl을 사용하여 Redmine API 호출
+                    sh """
+                    curl -X POST -H "Content-Type: application/json" \\
+                         -H "X-Redmine-API-Key: ${env.REDMINE_API_KEY}" \\
+                         -d '${jsonRequestBody}' \\
+                         "${env.REDMINE_URL}/issues.json"
+                    """
                 }
             }
         }

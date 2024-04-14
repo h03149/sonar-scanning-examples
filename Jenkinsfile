@@ -108,7 +108,8 @@ pipeline {
                         echo "Response: ${response}"
                         
                         //if (response) {
-                        def jsonResponse = parseJson(response)
+                        //def jsonResponse = parseJson(response)
+                        def jsonResponse = new groovy.json.JsonSlurper().parseText(response)
                         
                         def issueTitle = jsonResponse.projectStatus.status == 'ERROR' ? "Code Quality Gate Failed for ${moduleKey}" : "Code Quality Gate Passed for ${moduleKey}"
                         def issueDescription = "The SonarQube quality gate result for module ${moduleKey} was: ${jsonResponse.projectStatus.status}. Check the SonarQube dashboard for more details."

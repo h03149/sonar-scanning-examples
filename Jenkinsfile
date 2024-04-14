@@ -6,6 +6,8 @@ pipeline {
         MVN_HOME = tool 'Jenkins_Maven_3_9_6'  // Jenkins에서 설정한 Maven 설치의 이름입니다.
         REDMINE_API_KEY = credentials('redmine-api-key')
         REDMINE_URL = 'http://192.168.35.209:3000'
+        SONARQUBE_API_KEY = credentials('sonarqube_token')
+        SONARQUBE_HOST = 'http://192.168.35.209:9001'
     }
     stages {
         stage('Checkout') {
@@ -100,7 +102,25 @@ pipeline {
             steps {
                 script {
                     def buildStatus = currentBuild.result ?: 'SUCCESS'
-                    def description = "Build status: ${buildStatus}\nSonarQube analysis: View more details at your_sonarqube_dashboard_url"
+
+                    // SonarQube 결과 가져오기
+                    def sonarQubeResults = httpRequest(
+                        url: "${env.SONARQUBE_HOST}/api/measures/component?component=${env.SONAR_PROJECT_KEY}&metricKeys=ncloc,complexity,violations",
+                        authentication: 'sonarqube-api-key',
+                        acceptType: 'APPLICATION_JSON'
+                    ).content
+                    def jsonSlurper = new JsonSlurper()
+                    def sonarResultData = jsonSlurper.parseText(sonarQubeResults)
+                    def metrics = sonarResultData.component.measures.collectEntries { [(it.metric): it.value] }
+
+                    def description = """
+                    Build status: ${buildStatus}
+                    SonarQube analysis:
+                    - Lines of Code: ${metrics.ncloc}
+                    - Complexity: ${metrics.complexity}
+                    - Violations: ${metrics.violations}
+                    View more details at ${env.SONARQUBE_HOST}/dashboard?id=${env.SONAR_PROJECT_KEY}
+                    """
 
                     // Redmine 이슈 생성 요청
                     httpRequest(
@@ -109,11 +129,11 @@ pipeline {
                         contentType: 'APPLICATION_JSON',
                         acceptType: 'APPLICATION_JSON',
                         requestBody: JsonOutput.toJson([
-                            "issue": [
-                                "project_id": "testproject",
-                                "subject": "Build and Analysis Report",
-                                "description": description,
-                                "status_id": buildStatus == 'SUCCESS' ? '3' : '5'  // 상태 ID는 Redmine 설정에 따라 다를 수 있음
+                            issue: [
+                                project_id: "testproject",
+                                subject: "Build and Analysis Report",
+                                description: description,
+                                status_id: buildStatus == 'SUCCESS' ? '3' : '5'
                             ]
                         ]),
                         customHeaders: [[name: 'X-Redmine-API-Key', value: REDMINE_API_KEY]]

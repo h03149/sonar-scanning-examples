@@ -9,6 +9,7 @@ pipeline {
         REDMINE_URL = 'http://192.168.35.209:3000'
         SONARQUBE_API_KEY = credentials('sonarqube_token')
         SONARQUBE_HOST = 'http://192.168.35.209:9001'
+        SONAR_PROJECT_KEY = 'MavenModule1Key'
     }
     stages {
         stage('Checkout') {
@@ -24,7 +25,7 @@ pipeline {
                 dir('sonar-scanner-maven/maven-basic') {
                     withSonarQubeEnv('SonarQube Server') {
                         sh '${MVN_HOME}/bin/mvn -T 1C clean verify sonar:sonar \
-                        -Dsonar.projectKey=MavenModule1Key \
+                        -Dsonar.projectKey=${env.SONAR_PROJECT_KEY} \
                         -Dsonar.projectName="MavenModule 1" \
                         -Dsonar.plugins.downloadOnlyRequired=true'
                     }

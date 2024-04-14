@@ -49,7 +49,7 @@ pipeline {
 
                 dir('sonar-scanner-gradle/gradle-multimodule') {
                     withSonarQubeEnv('SonarQube Server') {
-                        sh './gradlew clean build jacocoTestReport \
+                        sh './gradlew clean build \
                         -Dsonar.projectKey=module3Key \
                         -Dsonar.projectName="Module 3" \
                         -Dsonar.plugins.downloadOnlyRequired=true sonar'

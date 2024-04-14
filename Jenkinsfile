@@ -18,7 +18,7 @@ pipeline {
                     withSonarQubeEnv('SonarQube Server') {
                         sh '${MVN_HOME}/bin/mvn clean verify sonar:sonar \
                         -Dsonar.projectKey=MavenModule1Key \
-                        -Dsonar.projectName="MavenModule 1"
+                        -Dsonar.projectName="MavenModule 1" \
                         -Dsonar.plugins.downloadOnlyRequired=true'
                     }
                 }
@@ -27,7 +27,7 @@ pipeline {
                     withSonarQubeEnv('SonarQube Server') {
                         sh '${MVN_HOME}/bin/mvn clean verify sonar:sonar \
                         -Dsonar.projectKey=MavenModule2Key \
-                        -Dsonar.projectName="MavenModule 2"
+                        -Dsonar.projectName="MavenModule 2" \
                         -Dsonar.plugins.downloadOnlyRequired=true'
                     }
                 }
@@ -36,7 +36,7 @@ pipeline {
                     withSonarQubeEnv('SonarQube Server') {
                         sh '${MVN_HOME}/bin/mvn clean verify sonar:sonar \
                         -Dsonar.projectKey=MavenModule3Key \
-                        -Dsonar.projectName="MavenModule 3"
+                        -Dsonar.projectName="MavenModule 3" \
                         -Dsonar.plugins.downloadOnlyRequired=true'
                     }
                 }

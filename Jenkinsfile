@@ -1,5 +1,12 @@
 import groovy.json.JsonSlurper
 
+@NonCPS
+def parseJson(String jsonStr) {
+    def jsonSlurper = new groovy.json.JsonSlurper()
+    def object = jsonSlurper.parseText(jsonStr)
+    return object
+}
+
 pipeline {
     agent any
     environment {
@@ -95,7 +102,31 @@ pipeline {
                 */
             }
         }
+        stage('Report to Redmine') {
+            steps {
+                script {
+                    def modules = ['MavenModule1Key', 'MavenModule2Key', 'MavenModule3Key', 'GradleModule1Key', 'GradleModule2Key', 'GradleModule3Key', 'GradleModule4Key']
+                    modules.each { moduleKey ->
+                        echo "Checking module: ${moduleKey}"
+                        def response = sh(script: "curl -u ${env.SONARQUBE_API_KEY}: 'http://192.168.35.209:9001/api/qualitygates/project_status?projectKey=${moduleKey}'", returnStdout: true).trim()
+                        echo "Response: ${response}"
 
+                        def jsonResponse = parseJson(response)
+                        
+                        def issueTitle = jsonResponse.projectStatus.status == 'ERROR' ? "Code Quality Gate Failed for ${moduleKey}" : "Code Quality Gate Passed for ${moduleKey}"
+                        def issueDescription = "The SonarQube quality gate result for module ${moduleKey} was: ${jsonResponse.projectStatus.status}. Check the SonarQube dashboard for more details."
+
+                        sh """
+                        curl -X POST http://192.168.35.209:3000/issues.json \\
+                            -H 'Content-Type: application/json' \\
+                            -H 'X-Redmine-API-Key: ${env.REDMINE_API_KEY}' \\
+                            -d '{"issue": {"project_id": "testproject", "subject": "${issueTitle}", "description": "${issueDescription}"}}'
+                        """
+                    }
+                }
+            }
+        }
+        /*
         stage('Report to Redmine') {
             steps {
                 script {
@@ -121,5 +152,6 @@ pipeline {
                 }
             }
         }
+        */
     }
 }

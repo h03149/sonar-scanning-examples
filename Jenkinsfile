@@ -102,7 +102,10 @@ pipeline {
                     // 각 모듈의 결과를 확인하고 Redmine에 이슈 생성
                     def modules = ['MavenModule1Key', 'MavenModule2Key', 'MavenModule3Key', 'GradleModule1Key', 'GradleModule2Key', 'GradleModule3Key', 'GradleModule4Key']
                     modules.each { moduleKey ->
+                        echo "Checking module: ${moduleKey}"
                         def response = sh(script: "curl -u ${env.REDMINE_API_KEY}: 'http://192.168.35.209:9001/api/qualitygates/project_status?projectKey=${moduleKey}'", returnStdout: true).trim()
+                        echo "Response: ${response}"
+                        
                         if (response) {
                             def jsonResponse = new groovy.json.JsonSlurper().parseText(response)
                             

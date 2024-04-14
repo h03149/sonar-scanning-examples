@@ -103,18 +103,22 @@ pipeline {
                     def modules = ['MavenModule1Key', 'MavenModule2Key', 'MavenModule3Key', 'GradleModule1Key', 'GradleModule2Key', 'GradleModule3Key', 'GradleModule4Key']
                     modules.each { moduleKey ->
                         def response = sh(script: "curl -u ${env.REDMINE_API_KEY}: 'http://192.168.35.209:9001/api/qualitygates/project_status?projectKey=${moduleKey}'", returnStdout: true).trim()
-                        def jsonResponse = new groovy.json.JsonSlurper().parseText(response)
-                        
-                        if (jsonResponse.projectStatus.status == 'ERROR') {
-                            def issueTitle = "Code Quality Gate Failed for ${moduleKey}"
-                            def issueDescription = "The SonarQube quality gate has failed for module ${moduleKey}. Check the SonarQube dashboard for more details."
-        
-                            sh """
-                            curl -X POST http://192.168.35.209:3000/issues.json \\
-                                -H 'Content-Type: application/json' \\
-                                -H 'X-Redmine-API-Key: ${env.REDMINE_API_KEY}' \\
-                                -d '{"issue": {"project_id": "testproject", "subject": "${issueTitle}", "description": "${issueDescription}"}}'
-                            """
+                        if (response) {
+                            def jsonResponse = new groovy.json.JsonSlurper().parseText(response)
+                            
+                            if (jsonResponse.projectStatus.status == 'ERROR') {
+                                def issueTitle = "Code Quality Gate Failed for ${moduleKey}"
+                                def issueDescription = "The SonarQube quality gate has failed for module ${moduleKey}. Check the SonarQube dashboard for more details."
+            
+                                sh """
+                                curl -X POST http://192.168.35.209:3000/issues.json \\
+                                    -H 'Content-Type: application/json' \\
+                                    -H 'X-Redmine-API-Key: ${env.REDMINE_API_KEY}' \\
+                                    -d '{"issue": {"project_id": "testproject", "subject": "${issueTitle}", "description": "${issueDescription}"}}'
+                                """
+                            }
+                        } else {
+                            echo "API 호출 결과가 비어 있습니다."
                         }
                     }
                 }

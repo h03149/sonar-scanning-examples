@@ -6,9 +6,6 @@ pipeline {
     environment {
         MVN_HOME = tool 'Jenkins_Maven_3_9_6'  // Jenkins에서 설정한 Maven 설치의 이름입니다.
         REDMINE_API_KEY = credentials('redmine-api-key')
-        REDMINE_URL = 'http://192.168.35.209:3000'
-        SONARQUBE_API_KEY = credentials('sonarqube-api-key')
-        SONARQUBE_HOST = 'http://192.168.35.209:9001'
     }
     stages {
         stage('Checkout') {
@@ -98,7 +95,28 @@ pipeline {
                 */
             }
         }
-
+        stage('Redmine Issue Creation') {
+            steps {
+                script {
+                    // SonarQube 결과 로드
+                    def qualityGate = currentBuild.rawBuild.getAction(org.sonarqube.ws.client.projectanalysis.QualityGatesResult.class)
+                    
+                    // 품질 게이트 실패 시 Redmine 이슈 생성
+                    if (qualityGate.status == 'FAILED') {
+                        def issueTitle = "Code Quality Gate Failed for ${env.JOB_NAME}"
+                        def issueDescription = "The SonarQube quality gate has failed for the build ${env.BUILD_NUMBER}. Check the SonarQube dashboard for more details."
+                        
+                        sh """
+                        curl -X POST http://your-redmine-site/issues.json \\
+                            -H 'Content-Type: application/json' \\
+                            -H 'X-Redmine-API-Key: ${REDMINE_API_KEY}' \\
+                            -d '{"issue": {"project_id": "your-project-id", "subject": "${issueTitle}", "description": "${issueDescription}"}}'
+                        """
+                    }
+                }
+            }
+        }
+/*
         stage('Report to Redmine') {
             steps {
                 script {
@@ -133,5 +151,6 @@ pipeline {
                 }
             }
         }
+        */
     }
 }

@@ -30,7 +30,8 @@ pipeline {
                     withSonarQubeEnv('SonarQube Server') {
                         sh './gradlew clean build jacocoTestReport \
                         -Dsonar.projectKey=module1Key \
-                        -Dsonar.projectName="Module 1" sonar '
+                        -Dsonar.projectName="Module 1" \
+                        -Dsonar.plugins.downloadOnlyRequired=true sonar'
                     }
                 }
 
@@ -39,7 +40,8 @@ pipeline {
                     withSonarQubeEnv('SonarQube Server') {
                         sh './gradlew clean build jacocoTestReport \
                         -Dsonar.projectKey=module2Key \
-                        -Dsonar.projectName="Module 2" sonar '
+                        -Dsonar.projectName="Module 2" \
+                        -Dsonar.plugins.downloadOnlyRequired=true sonar'
                     }
                 }
                 
@@ -49,7 +51,8 @@ pipeline {
                     withSonarQubeEnv('SonarQube Server') {
                         sh './gradlew clean build jacocoTestReport \
                         -Dsonar.projectKey=module3Key \
-                        -Dsonar.projectName="Module 3" sonar '
+                        -Dsonar.projectName="Module 3" \
+                        -Dsonar.plugins.downloadOnlyRequired=true sonar'
                     }
                 }
 
@@ -57,7 +60,8 @@ pipeline {
                     withSonarQubeEnv('SonarQube Server') {
                         sh './gradlew clean build jacocoTestReport \
                         -Dsonar.projectKey=module4Key \
-                        -Dsonar.projectName="Module 4" sonar '
+                        -Dsonar.projectName="Module 4" \
+                        -Dsonar.plugins.downloadOnlyRequired=true sonar'
                     }
                 }
 

@@ -1,5 +1,5 @@
 //import groovy.json.JsonOutput
-//import groovy.json.JsonSlurper
+import groovy.json.JsonSlurper
 
 pipeline {
     agent any
@@ -215,4 +215,8 @@ pipeline {
         }
         */
     }
+}
+
+def parseJson(String text) {
+    new JsonSlurper().parseText(text)
 }

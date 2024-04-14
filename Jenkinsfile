@@ -6,6 +6,7 @@ pipeline {
     environment {
         MVN_HOME = tool 'Jenkins_Maven_3_9_6'  // Jenkins에서 설정한 Maven 설치의 이름입니다.
         REDMINE_API_KEY = credentials('redmine-api-key')
+        SONARQUBE_API_KEY = credentials('sonarqube_token')
     }
     stages {
         stage('Checkout') {
@@ -103,7 +104,7 @@ pipeline {
                     def modules = ['MavenModule1Key', 'MavenModule2Key', 'MavenModule3Key', 'GradleModule1Key', 'GradleModule2Key', 'GradleModule3Key', 'GradleModule4Key']
                     modules.each { moduleKey ->
                         echo "Checking module: ${moduleKey}"
-                        def response = sh(script: "curl -u ${env.REDMINE_API_KEY}: 'http://192.168.35.209:9001/api/qualitygates/project_status?projectKey=${moduleKey}'", returnStdout: true).trim()
+                        def response = sh(script: "curl -u ${env.SONARQUBE_API_KEY}: 'http://192.168.35.209:9001/api/qualitygates/project_status?projectKey=${moduleKey}'", returnStdout: true).trim()
                         echo "Response: ${response}"
                         
                         if (response) {

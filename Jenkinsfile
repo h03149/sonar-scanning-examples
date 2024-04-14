@@ -7,7 +7,7 @@ pipeline {
         MVN_HOME = tool 'Jenkins_Maven_3_9_6'  // Jenkins에서 설정한 Maven 설치의 이름입니다.
         REDMINE_API_KEY = credentials('redmine-api-key')
         REDMINE_URL = 'http://192.168.35.209:3000'
-        SONARQUBE_API_KEY = credentials('sonarqube_token')
+        SONARQUBE_API_KEY = 'squ_8370a2485b7b821f45ca26c44f7745b9f1400483'
         SONARQUBE_HOST = 'http://192.168.35.209:9001'
     }
     stages {

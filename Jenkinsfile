@@ -4,7 +4,7 @@ import groovy.json.JsonSlurper
 def parseJson(String jsonStr) {
     def jsonSlurper = new groovy.json.JsonSlurper()
     def object = jsonSlurper.parseText(jsonStr)
-    return object
+    return new HashMap<>(object) // LazyMap을 HashMap으로 변환
 }
 
 pipeline {

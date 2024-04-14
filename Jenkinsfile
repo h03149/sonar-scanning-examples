@@ -16,7 +16,7 @@ pipeline {
                 // Maven 프로젝트 스캔
                 dir('sonar-scanner-maven/maven-basic') {
                     withSonarQubeEnv('SonarQube Server') {
-                        sh '${MVN_HOME}/bin/mvn clean verify sonar:sonar \
+                        sh '${MVN_HOME}/bin/mvn -T 1C clean verify sonar:sonar \
                         -Dsonar.projectKey=MavenModule1Key \
                         -Dsonar.projectName="MavenModule 1" \
                         -Dsonar.plugins.downloadOnlyRequired=true'
@@ -25,7 +25,7 @@ pipeline {
                 
                 dir('sonar-scanner-maven/maven-multilingual') {
                     withSonarQubeEnv('SonarQube Server') {
-                        sh '${MVN_HOME}/bin/mvn clean verify sonar:sonar \
+                        sh '${MVN_HOME}/bin/mvn -T 1C clean verify sonar:sonar \
                         -Dsonar.projectKey=MavenModule2Key \
                         -Dsonar.projectName="MavenModule 2" \
                         -Dsonar.plugins.downloadOnlyRequired=true'
@@ -34,7 +34,7 @@ pipeline {
 
                 dir('sonar-scanner-maven/maven-multimodule') {
                     withSonarQubeEnv('SonarQube Server') {
-                        sh '${MVN_HOME}/bin/mvn clean verify sonar:sonar \
+                        sh '${MVN_HOME}/bin/mvn -T 1C clean verify sonar:sonar \
                         -Dsonar.projectKey=MavenModule3Key \
                         -Dsonar.projectName="MavenModule 3" \
                         -Dsonar.plugins.downloadOnlyRequired=true'

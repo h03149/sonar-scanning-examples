@@ -9,7 +9,6 @@ pipeline {
         REDMINE_URL = 'http://192.168.35.209:3000'
         SONARQUBE_API_KEY = credentials('sonarqube_token')
         SONARQUBE_HOST = 'http://192.168.35.209:9001'
-        SONAR_PROJECT_KEY = 'MavenModule1Key'
     }
     stages {
         stage('Checkout') {
@@ -25,7 +24,7 @@ pipeline {
                 dir('sonar-scanner-maven/maven-basic') {
                     withSonarQubeEnv('SonarQube Server') {
                         sh '${MVN_HOME}/bin/mvn -T 1C clean verify sonar:sonar \
-                        -Dsonar.projectKey=${env.SONAR_PROJECT_KEY} \
+                        -Dsonar.projectKey=MavenModule1Key \
                         -Dsonar.projectName="MavenModule 1" \
                         -Dsonar.plugins.downloadOnlyRequired=true'
                     }
@@ -107,7 +106,7 @@ pipeline {
 
                     // SonarQube 결과 가져오기
                     def sonarQubeResults = httpRequest(
-                        url: "${env.SONARQUBE_HOST}/api/measures/component?component=${env.SONAR_PROJECT_KEY}&metricKeys=ncloc,complexity,violations",
+                        url: "${env.SONARQUBE_HOST}/api/measures/component?component=MavenModule1Key&metricKeys=ncloc,complexity,violations",
                         authentication: env.SONARQUBE_API_KEY,
                         acceptType: 'APPLICATION_JSON'
                     ).content
@@ -121,7 +120,7 @@ pipeline {
                     - Lines of Code: ${metrics.ncloc}
                     - Complexity: ${metrics.complexity}
                     - Violations: ${metrics.violations}
-                    View more details at ${env.SONARQUBE_HOST}/dashboard?id=${env.SONAR_PROJECT_KEY}
+                    View more details at ${env.SONARQUBE_HOST}/dashboard?id=MavenModule1Key
                     """
 
                     // Redmine 이슈 생성 요청

@@ -11,12 +11,16 @@ pipeline {
         stage('SonarQube Scan') {
             steps {
                 // Maven 프로젝트 스캔
-                /*
-                dir('mavenProject1') {
-                    withSonarQubeEnv('YourSonarQubeServerName') {
-                        sh 'mvn sonar:sonar'
+                
+                dir('sonar-scanner-maven/maven-basic') {
+                    withSonarQubeEnv('SonarQube Server') {
+                        sh "${mvn}/bin/mvn clean verify sonar:sonar \
+                        -Dsonar.projectKey=MavenModule1Key \
+                        -Dsonar.projectName='MavenModule1'"
                     }
                 }
+
+                /*
                 dir('mavenProject2') {
                     withSonarQubeEnv('YourSonarQubeServerName') {
                         sh 'mvn sonar:sonar'

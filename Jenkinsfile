@@ -109,10 +109,10 @@ pipeline {
                         def issueDescription = "The SonarQube quality gate has failed for the build ${env.BUILD_NUMBER}. Check the SonarQube dashboard for more details."
                         
                         sh """
-                        curl -X POST http://your-redmine-site/issues.json \\
+                        curl -X POST http://192.168.35.209:3000/issues.json \\
                             -H 'Content-Type: application/json' \\
                             -H 'X-Redmine-API-Key: ${env.REDMINE_API_KEY}' \\
-                            -d '{"issue": {"project_id": "your-project-id", "subject": "${issueTitle}", "description": "${issueDescription}"}}'
+                            -d '{"issue": {"project_id": "testproject", "subject": "${issueTitle}", "description": "${issueDescription}"}}'
                         """
                     }
                 }

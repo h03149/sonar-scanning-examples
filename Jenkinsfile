@@ -114,12 +114,12 @@ pipeline {
 """
 ## 빌드 결과: ${buildStatus}
 ## SonarQube 품질 게이트: ${sonarQualityGate}
----
 
+---
 ### 빌드 로그 (일부):
 ${currentBuild.rawBuild.getLog(100)}
----
 
+---
 ### SonarQube 분석 결과:
 [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
 """

@@ -116,10 +116,9 @@ pipeline {
                         [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
                     """
 
-                    def replace_reportContent = reportContent.replaceAll('"', '\\"')
-                    replace_reportContent = replace_reportContent.replaceAll(',', '\\n')
+                    def replace_reportContent = reportContent.replaceAll(',', '\\n')
 
-                    echo "${reportContent}"
+                    echo "${replace_reportContent}"
 
                     // Redmine API를 사용하여 이슈 생성
                     

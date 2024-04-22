@@ -107,7 +107,7 @@ pipeline {
                     //def sonarQualityGate = currentBuild.rawBuild.getLog(100).find { it =~ /ANALYSIS SUCCESSFUL/ } != null ? 'SUCCESS' : 'FAILED'
                     def sonarQualityGate = currentBuild.rawBuild.getLogFile().text.contains("ANALYSIS SUCCESSFUL") ? 'SUCCESS' : 'FAILED'
                     def reportContent = 
-"
+"""
 ## 빌드 결과: ${buildStatus}
 ## SonarQube 품질 게이트: ${sonarQualityGate}
 ---
@@ -118,7 +118,7 @@ ${currentBuild.rawBuild.getLog(100)}
 
 ### SonarQube 분석 결과:
 [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
-"
+"""
 
                     def replace_reportContent = reportContent.replaceAll(',', '\n')
 

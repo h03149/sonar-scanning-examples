@@ -117,13 +117,11 @@ pipeline {
                     """
 
                     def replace_reportContent = reportContent.replaceAll('"', '\\"')
-
-                    echo "${currentBuild}"
-
+                    echo "${replace_reportContent}"
                     // Redmine API를 사용하여 이슈 생성
                     
                     def response = httpRequest httpMode: 'POST', 
-                        url: "${env.REDMINE_URL}/issues.json?key=${env.REDMINE_API_KEY}", 
+                        url: '$REDMINE_URL/issues.json?key=$REDMINE_API_KEY', 
                         contentType: 'APPLICATION_JSON',
                         requestBody: """
                         {
@@ -133,7 +131,7 @@ pipeline {
                             "status_id": 1,
                             "priority_id": 4,
                             "subject": "[Jenkins Pipeline] Build & SonarQube Report",
-                            "description": "${replace_reportContent}"
+                            "description": "${reportContent}"
                             }
                         }
                         """

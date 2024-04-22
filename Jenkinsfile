@@ -122,13 +122,15 @@ ${currentBuild.rawBuild.getLog(100)}
 [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
 """
                     
-                    String replace_reportContent = reportContent.replaceAll(/([\\"])/, '\\\\$1').replaceAll(/\n/, '\n').replaceAll(/\r/, '\r').replaceAll(/\t/, '\t').replaceAll(',', '\n')
+                    String replace_reportContent = "asd"
+                    //reportContent.replaceAll(/([\\"])/, '\\\\$1').replaceAll(/\n/, '\n').replaceAll(/\r/, '\r').replaceAll(/\t/, '\t').replaceAll(',', '\n')
                     echo "${replace_reportContent}"
 
                     // Redmine API를 사용하여 이슈 생성
                     
                     def response = httpRequest httpMode: 'POST', 
-                        url: "${env.REDMINE_URL}/issues.json?key=${env.REDMINE_API_KEY}",
+                        url: "${env.REDMINE_URL}/issues.json?key=${env.REDMINE_API_KEY}", 
+                        contentType: 'APPLICATION_JSON',
                         requestBody: """
                         {
                             "issue": {

@@ -22,7 +22,7 @@ pipeline {
                 // Maven 프로젝트 스캔
                 dir('sonar-scanner-maven/maven-basic') {
                     withSonarQubeEnv('SonarQube Server') {
-                        sh '${MVN_HOME}/bin/mvn -T clean verify sonar:sonar \
+                        sh '${MVN_HOME}/bin/mvn clean verify sonar:sonar \
                         -Dsonar.projectKey=MavenModule1Key \
                         -Dsonar.projectName="MavenModule 1" \
                         -Dsonar.plugins.downloadOnlyRequired=true'

@@ -115,7 +115,7 @@ pipeline {
                     ---
                     ### SonarQube 분석 결과:
                     [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
-                    """
+                    """.encode('UTF-8')
 
                     // Redmine API를 사용하여 이슈 생성
                     def response = httpRequest httpMode: 'POST', 

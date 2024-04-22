@@ -153,7 +153,7 @@ ${currentBuild.rawBuild.getLog(100)}
                                 "status_id": 10,
                                 "priority_id": 3,
                                 "subject": "[Jenkins Pipeline] Build & SonarQube Report",
-                                "description": "${replace_reportContent}"
+                                "description": ${replace_reportContent}
                             }
                         }
                         """

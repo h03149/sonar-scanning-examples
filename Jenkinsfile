@@ -9,7 +9,6 @@ pipeline {
         SONAR_HOST_URL = "http://192.168.11.18:9001" // SonarQube 서버 URL
         SONARQUBE_API_KEY = credentials('sonarqube_token')
     }
-
     stages {
         stage('Checkout') {
             steps {
@@ -100,41 +99,44 @@ pipeline {
                 */
             }
         }
-
         stage('Redmine 보고') {
             steps {
-                def getSonarIssues(projectKey) {
-                    def response = httpRequest url: "${env.SONAR_HOST_URL}/api/issues/search?projectKeys=${projectKey}&severities=BLOCKER,CRITICAL,MAJOR&ps=5",
-                                            auth: 'BASIC', user: env.SONARQUBE_API_KEY, 
-                                            contentType: 'APPLICATION_JSON'
-                    return parseJson(response.content).issues
-                }
-
-                def issues = getSonarIssues('MavenModule1Key') // SonarQube 프로젝트 키를 입력
-                def issueList = """<ul>"""
-                issues.each { issue ->
-                    issueList += """<li>[${issue.severity}] ${issue.component}: ${issue.message} (Line ${issue.line})</li>"""
-                }
-                issueList += """</ul>"""
-
-                redmineIssueTracker(
-                    projectKey: 'testproject',
-                    type: 'Task',
-                    subject: "[Jenkins Pipeline] 빌드 및 SonarQube 분석 보고",
-                    description: """
-                        ## 빌드 결과: ${currentBuild.result}
-                        ## SonarQube 품질 게이트: ${/* SonarQube 게이트 상태 확인 로직 */}
+                script {
+                    def buildStatus = currentBuild.result
+                    //def sonarQualityGate = currentBuild.rawBuild.getLog(100).find { it =~ /ANALYSIS SUCCESSFUL/ } != null ? 'SUCCESS' : 'FAILED'
+                    def sonarQualityGate = currentBuild.rawBuild.getLogFile().text.contains("ANALYSIS SUCCESSFUL") ? 'SUCCESS' : 'FAILED'
+                    def reportContent = """
+                        ## 빌드 결과: ${buildStatus}
+                        ## SonarQube 품질 게이트: ${sonarQualityGate}
                         ---
                         ### 빌드 로그 (일부):
                         ${currentBuild.rawBuild.getLog(100)}
                         ---
                         ### SonarQube 분석 결과:
                         [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
-                        ---
-                        ### 주요 이슈:
-                        ${issueList}
                     """
-                )
+
+                    // Redmine API를 사용하여 이슈 생성
+                    def response = httpRequest httpMode: 'POST', 
+                        url: "${env.REDMINE_URL}/issues.json?key=${env.REDMINE_API_KEY}", 
+                        contentType: 'APPLICATION_JSON',
+                        requestBody: """
+                        {
+                            "issue": {
+                            "project_id": ${env.REDMINE_PROJECT_ID},
+                            "tracker_id": 1, 
+                            "status_id": 1, 
+                            "priority_id": 4, 
+                            "subject": "[Jenkins Pipeline] 빌드 및 SonarQube 분석 보고",
+                            "description": "${reportContent.replaceAll('"', '\\"')}"
+                            }
+                        }
+                        """
+
+                    if (response.status != 201) {
+                        error "Redmine 이슈 생성 실패: ${response.content}"
+                    }
+                }
             }
         }
     }

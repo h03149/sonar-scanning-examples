@@ -118,6 +118,23 @@ pipeline {
                     """
 
                     // Redmine API를 사용하여 이슈 생성
+                    def response = httpRequest httpMode: 'POST', 
+                                                url: "${env.REDMINE_URL}/issues.json?key=${env.REDMINE_API_KEY}", 
+                                                contentType: 'APPLICATION_JSON',
+                                                requestBody: """
+                                                {
+                                                  "issue": {
+                                                    "project_id": ${env.REDMINE_PROJECT_ID},
+                                                    "subject": "[Jenkins Pipeline] 빌드 및 SonarQube 분석 보고",
+                                                    "description": "${reportContent.replaceAll('"', '\\"')}"
+                                                  }
+                                                }
+                                                """
+
+                    if (response.status != 201) {
+                        error "Redmine 이슈 생성 실패: ${response.content}"
+                    }
+                    /*
                     def issue = new URL("${env.REDMINE_URL}/issues.json?key=${env.REDMINE_API_KEY}").openConnection().with {
                         doOutput = true
                         requestMethod = 'POST'
@@ -139,6 +156,7 @@ pipeline {
                     if (issue.status != 201) {
                         error "Redmine 이슈 생성 실패: ${issue.content}"
                     }
+                    */
                 }
             }
         }

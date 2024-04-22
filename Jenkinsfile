@@ -106,6 +106,19 @@ pipeline {
                     //def buildLog = sh(script: 'cat /path/to/build.log', returnStdout: true).trim()
                     //def sonarQualityGate = buildLog.contains("ANALYSIS SUCCESSFUL") ? 'SUCCESS' : 'FAILED'
                     def sonarQualityGate = currentBuild.rawBuild.getLog(100).find { it =~ /ANALYSIS SUCCESSFUL/ } != null ? 'SUCCESS' : 'FAILED'
+                    def reportContent = new String(
+                        """
+                        ## 빌드 결과: ${buildStatus}
+                        ## SonarQube 품질 게이트: ${sonarQualityGate}
+                        ---
+                        ### 빌드 로그:
+                        ${currentBuild.rawBuild.getLog(100)}
+                        ---
+                        ### SonarQube 분석 결과:
+                        [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
+                        """.getBytes('UTF-8'), 'UTF-8'
+                    )
+                    /*
                     def reportContent = """
                     ## 빌드 결과: ${buildStatus}
                     ## SonarQube 품질 게이트: ${sonarQualityGate}
@@ -115,7 +128,8 @@ pipeline {
                     ---
                     ### SonarQube 분석 결과:
                     [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
-                    """.encode('UTF-8')
+                    """
+                    */
 
                     // Redmine API를 사용하여 이슈 생성
                     def response = httpRequest httpMode: 'POST', 

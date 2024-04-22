@@ -116,7 +116,7 @@ pipeline {
                         [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
                     """
 
-                    def replace_reportContent = reportContent.replaceAll(',', '\\n')
+                    def replace_reportContent = reportContent.replaceAll(',', '\n')
 
                     echo "${replace_reportContent}"
 

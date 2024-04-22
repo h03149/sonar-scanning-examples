@@ -137,7 +137,7 @@ ${currentBuild.rawBuild.getLog(100)}
 */
 
                     //def replace_reportContent = reportContent.replaceAll("\n", "\\n").replaceAll("\"", "\\\"")
-                    def replace_reportContent JsonOutput.toJson(reportContent)
+                    def replace_reportContent = JsonOutput.toJson(reportContent)
                     echo "${replace_reportContent}"
 
                     // Redmine API를 사용하여 이슈 생성

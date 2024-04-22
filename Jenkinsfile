@@ -10,13 +10,6 @@ pipeline {
         SONARQUBE_API_KEY = credentials('sonarqube_token')
     }
 
-    def getSonarIssues(projectKey) {
-        def response = httpRequest url: "${env.SONAR_HOST_URL}/api/issues/search?projectKeys=${projectKey}&severities=BLOCKER,CRITICAL,MAJOR&ps=5",
-                                auth: 'BASIC', user: env.SONARQUBE_API_KEY, 
-                                contentType: 'APPLICATION_JSON'
-        return parseJson(response.content).issues
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -107,8 +100,16 @@ pipeline {
                 */
             }
         }
+
         stage('Redmine 보고') {
             steps {
+                def getSonarIssues(projectKey) {
+                    def response = httpRequest url: "${env.SONAR_HOST_URL}/api/issues/search?projectKeys=${projectKey}&severities=BLOCKER,CRITICAL,MAJOR&ps=5",
+                                            auth: 'BASIC', user: env.SONARQUBE_API_KEY, 
+                                            contentType: 'APPLICATION_JSON'
+                    return parseJson(response.content).issues
+                }
+
                 def issues = getSonarIssues('MavenModule1Key') // SonarQube 프로젝트 키를 입력
                 def issueList = """<ul>"""
                 issues.each { issue ->

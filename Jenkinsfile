@@ -103,50 +103,35 @@ pipeline {
             steps {
                 script {
                     def buildStatus = currentBuild.result
-                    //def buildLog = sh(script: 'cat /path/to/build.log', returnStdout: true).trim()
-                    //def sonarQualityGate = buildLog.contains("ANALYSIS SUCCESSFUL") ? 'SUCCESS' : 'FAILED'
-                    def sonarQualityGate = currentBuild.rawBuild.getLog(100).find { it =~ /ANALYSIS SUCCESSFUL/ } != null ? 'SUCCESS' : 'FAILED'
-                    def reportContent = new String(
-                        """
+                    //def sonarQualityGate = currentBuild.rawBuild.getLog(100).find { it =~ /ANALYSIS SUCCESSFUL/ } != null ? 'SUCCESS' : 'FAILED'
+                    def sonarQualityGate = currentBuild.rawBuild.getLogFile().text.contains("ANALYSIS SUCCESSFUL") ? 'SUCCESS' : 'FAILED'
+                    def reportContent = """
                         ## 빌드 결과: ${buildStatus}
                         ## SonarQube 품질 게이트: ${sonarQualityGate}
                         ---
-                        ### 빌드 로그:
+                        ### 빌드 로그 (일부):
                         ${currentBuild.rawBuild.getLog(100)}
                         ---
                         ### SonarQube 분석 결과:
                         [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
-                        """.getBytes('UTF-8'), 'UTF-8'
-                    )
-                    /*
-                    def reportContent = """
-                    ## 빌드 결과: ${buildStatus}
-                    ## SonarQube 품질 게이트: ${sonarQualityGate}
-                    ---
-                    ### 빌드 로그:
-                    ${currentBuild.rawBuild.getLog(100)}
-                    ---
-                    ### SonarQube 분석 결과:
-                    [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
-                    """
-                    */
+                    """.encode('UTF-8')
 
                     // Redmine API를 사용하여 이슈 생성
                     def response = httpRequest httpMode: 'POST', 
-                                                url: "${env.REDMINE_URL}/issues.json?key=${env.REDMINE_API_KEY}", 
-                                                contentType: 'APPLICATION_JSON',
-                                                requestBody: """
-                                                {
-                                                  "issue": {
-                                                    "project_id": ${env.REDMINE_PROJECT_ID},
-                                                    "tracker_id": 1, 
-                                                    "status_id": 1, 
-                                                    "priority_id": 4, 
-                                                    "subject": "[Jenkins Pipeline] 빌드 및 SonarQube 분석 보고",
-                                                    "description": "${reportContent.replaceAll('"', '\\"')}"
-                                                  }
-                                                }
-                                                """
+                        url: "${env.REDMINE_URL}/issues.json?key=${env.REDMINE_API_KEY}", 
+                        contentType: 'APPLICATION_JSON',
+                        requestBody: """
+                        {
+                            "issue": {
+                            "project_id": ${env.REDMINE_PROJECT_ID},
+                            "tracker_id": 1, 
+                            "status_id": 1, 
+                            "priority_id": 4, 
+                            "subject": "[Jenkins Pipeline] 빌드 및 SonarQube 분석 보고",
+                            "description": "${reportContent.replaceAll('"', '\\"')}"
+                            }
+                        }
+                        """
 
                     if (response.status != 201) {
                         error "Redmine 이슈 생성 실패: ${response.content}"

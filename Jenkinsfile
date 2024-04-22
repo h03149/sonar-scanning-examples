@@ -2,11 +2,13 @@ pipeline {
     agent any
     environment {
         MVN_HOME = tool 'Jenkins_Maven_3_9_6'  // Jenkins에서 설정한 Maven 설치의 이름입니다.
-        REDMINE_URL = 'http://192.168.11.18:3000'
+//회사        REDMINE_URL = 'http://192.168.11.18:3000'
+        REDMINE_URL = 'http://192.168.35.209:3000'
         REDMINE_API_KEY = credentials('redmine-api-key')
         REDMINE_PROJECT_ID = 'testproject'
 
-        SONAR_HOST_URL = "http://192.168.11.18:9001" // SonarQube 서버 URL
+//        SONAR_HOST_URL = "http://192.168.11.18:9001" // SonarQube 서버 URL
+        SONAR_HOST_URL = "http://192.168.35.209:9001" // SonarQube 서버 URL
         SONARQUBE_API_KEY = credentials('sonarqube_token')
         SONAR_PROJECT_KEY = 'MavenModule1Key'
     }
@@ -135,7 +137,7 @@ ${currentBuild.rawBuild.getLog(100)}
                                 "project_id": 1,
                                 "tracker_id": 1,
                                 "status_id": 1,
-                                "priority_id": 4,
+                                "priority_id": 1,
                                 "subject": "[Jenkins Pipeline] Build & SonarQube Report",
                                 "description": "${replace_reportContent}"
                             }

@@ -110,7 +110,16 @@ pipeline {
                     def sonarQualityGate = currentBuild.rawBuild.getLogFile().text.contains("ANALYSIS SUCCESSFUL") ? 'SUCCESS' : 'FAILED'
                     def reportContent = 
 """
-test
+## 빌드 결과: ${buildStatus}
+## SonarQube 품질 게이트: ${sonarQualityGate}
+---
+
+### 빌드 로그 (일부):
+${currentBuild.rawBuild.getLog(100)}
+---
+
+### SonarQube 분석 결과:
+[SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
 """
 /*
 ## 빌드 결과: ${buildStatus}
@@ -125,7 +134,7 @@ ${currentBuild.rawBuild.getLog(100)}
 [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
 */
 
-                    String replace_reportContent = reportContent.replaceAll(/([\\"])/, '\\\\$1').replaceAll(/\n/, '\n').replaceAll(/\r/, '\r').replaceAll(/\t/, '\t').replaceAll(',', '\n')
+                    def replace_reportContent = reportContent.replaceAll("\n", "\\n").replaceAll("\"", "\\\"")
                     echo "${replace_reportContent}"
 
                     // Redmine API를 사용하여 이슈 생성
@@ -141,7 +150,7 @@ ${currentBuild.rawBuild.getLog(100)}
                                 "status_id": 10,
                                 "priority_id": 3,
                                 "subject": "[Jenkins Pipeline] Build & SonarQube Report",
-                                "description": "${reportContent}"
+                                "description": "${replace_reportContent}"
                             }
                         }
                         """

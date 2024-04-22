@@ -122,7 +122,7 @@ ${currentBuild.rawBuild.getLog(100)}
 [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
 """
                     
-                    def replace_reportContent = reportContent.replaceAll(/([\\"])/, '\\\\$1').replaceAll(/\n/, '\n').replaceAll(/\r/, '\r').replaceAll(/\t/, '\t')
+                    def replace_reportContent = reportContent.replaceAll(/([\\"])/, '\\\\$1').replaceAll(/\n/, '\n').replaceAll(/\r/, '\r').replaceAll(/\t/, '\t').replaceAll(',', '\n')
                     echo "${replace_reportContent}"
 
                     // Redmine API를 사용하여 이슈 생성

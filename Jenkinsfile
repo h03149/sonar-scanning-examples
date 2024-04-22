@@ -125,9 +125,9 @@ pipeline {
                                                 {
                                                   "issue": {
                                                     "project_id": ${env.REDMINE_PROJECT_ID},
-                                                    "tracker_id": 1, // tracker ID (필요에 따라 변경)
-                                                    "status_id": 1, // status ID (필요에 따라 변경)
-                                                    "priority_id": 4, // priority ID (필요에 따라 변경)
+                                                    "tracker_id": 1, 
+                                                    "status_id": 1, 
+                                                    "priority_id": 4, 
                                                     "subject": "[Jenkins Pipeline] 빌드 및 SonarQube 분석 보고",
                                                     "description": "${reportContent.replaceAll('"', '\\"')}"
                                                   }

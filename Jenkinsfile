@@ -109,17 +109,21 @@ pipeline {
                     //def sonarQualityGate = currentBuild.rawBuild.getLog(100).find { it =~ /ANALYSIS SUCCESSFUL/ } != null ? 'SUCCESS' : 'FAILED'
                     def sonarQualityGate = currentBuild.rawBuild.getLogFile().text.contains("ANALYSIS SUCCESSFUL") ? 'SUCCESS' : 'FAILED'
                     def reportContent = 
-"""\n
-## 빌드 결과: ${buildStatus}\n
-## SonarQube 품질 게이트: ${sonarQualityGate}\n
----\n\n
-### 빌드 로그 (일부):\n
-${currentBuild.rawBuild.getLog(100)}\n
----\n\n
-### SonarQube 분석 결과:\n
-[SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})\n
 """
-                    
+[SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
+"""
+/*
+## 빌드 결과: ${buildStatus}
+## SonarQube 품질 게이트: ${sonarQualityGate}
+---
+
+### 빌드 로그 (일부):
+${currentBuild.rawBuild.getLog(100)}
+---
+
+### SonarQube 분석 결과:
+*/
+
                     String replace_reportContent = reportContent.replaceAll(/([\\"])/, '\\\\$1').replaceAll(/\n/, '\n').replaceAll(/\r/, '\r').replaceAll(/\t/, '\t').replaceAll(',', '\n')
                     echo "${replace_reportContent}"
 

@@ -24,7 +24,7 @@ pipeline {
                 dir('sonar-scanner-maven/maven-basic') {
                     withSonarQubeEnv('SonarQube Server') {
                         sh '${MVN_HOME}/bin/mvn clean verify sonar:sonar \
-                        -Dsonar.projectKey="${SONAR_PROJECT_KEY} \
+                        -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
                         -Dsonar.projectName="MavenModule 1" \
                         -Dsonar.plugins.downloadOnlyRequired=true'
                     }

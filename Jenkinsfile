@@ -115,12 +115,14 @@ pipeline {
 ---
 
 ### 빌드 로그 (일부):
-${currentBuild.rawBuild.getLog(10)}
+
 ---
 
 ### SonarQube 분석 결과:
 [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
 """
+
+//${currentBuild.rawBuild.getLog(100)}
                     
                     String replace_reportContent = reportContent.replaceAll(/([\\"])/, '\\\\$1').replaceAll(/\n/, '\n').replaceAll(/\r/, '\r').replaceAll(/\t/, '\t').replaceAll(',', '\n')
                     echo "${replace_reportContent}"

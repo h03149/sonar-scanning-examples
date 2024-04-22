@@ -121,10 +121,11 @@ ${currentBuild.rawBuild.getLog(100)}
 ### SonarQube 분석 결과:
 [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
 """
+                    def jsonEncode(String text) {
+                        return text.replaceAll(/([\\"])/, '\\\\$1').replaceAll(/\n/, '\\n').replaceAll(/\r/, '\\r').replaceAll(/\t/, '\\t')
+                    }
 
-                    def replace_reportContent = reportContent.replaceAll(',', '\n')
-
-                    echo "${replace_reportContent}"
+                    def replace_reportContent = jsonEncode(reportContent)
 
                     // Redmine API를 사용하여 이슈 생성
                     

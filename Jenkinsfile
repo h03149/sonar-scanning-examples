@@ -103,7 +103,9 @@ pipeline {
             steps {
                 script {
                     def buildStatus = currentBuild.result
-                    def sonarQualityGate = currentBuild.rawBuild.getLog(100).find { it =~ /ANALYSIS SUCCESSFUL/ } != null ? 'SUCCESS' : 'FAILED'
+                    def buildLog = sh(script: 'cat /path/to/build.log', returnStdout: true).trim()
+                    def sonarQualityGate = buildLog.contains("ANALYSIS SUCCESSFUL") ? 'SUCCESS' : 'FAILED'
+                    //def sonarQualityGate = currentBuild.rawBuild.getLog(100).find { it =~ /ANALYSIS SUCCESSFUL/ } != null ? 'SUCCESS' : 'FAILED'
                     def reportContent = """
                     ## 빌드 결과: ${buildStatus}
                     ## SonarQube 품질 게이트: ${sonarQualityGate}

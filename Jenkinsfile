@@ -32,7 +32,7 @@ pipeline {
                 /*
                 dir('sonar-scanner-maven/maven-multilingual') {
                     withSonarQubeEnv('SonarQube Server') {
-                        sh '${MVN_HOME}/bin/mvn -T clean verify sonar:sonar \
+                        sh '${MVN_HOME}/bin/mvn clean verify sonar:sonar \
                         -Dsonar.projectKey=MavenModule2Key \
                         -Dsonar.projectName="MavenModule 2" \
                         -Dsonar.plugins.downloadOnlyRequired=true'
@@ -103,7 +103,7 @@ pipeline {
             steps {
                 script {
                     def buildStatus = currentBuild.result
-                    def sonarQualityGate = currentBuild.currentResult.rawBuild.getLog(100).find { it =~ /ANALYSIS SUCCESSFUL/ } != null ? 'SUCCESS' : 'FAILED'
+                    def sonarQualityGate = currentBuild.rawBuild.getLog(100).find { it =~ /ANALYSIS SUCCESSFUL/ } != null ? 'SUCCESS' : 'FAILED'
                     def reportContent = """
                     ## 빌드 결과: ${buildStatus}
                     ## SonarQube 품질 게이트: ${sonarQualityGate}

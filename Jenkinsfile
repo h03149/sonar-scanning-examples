@@ -1,3 +1,5 @@
+import groovy.json.JsonOutput
+
 pipeline {
     agent any
     environment {
@@ -134,7 +136,8 @@ ${currentBuild.rawBuild.getLog(100)}
 [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
 */
 
-                    def replace_reportContent = reportContent.replaceAll("\n", "\\n").replaceAll("\"", "\\\"")
+                    //def replace_reportContent = reportContent.replaceAll("\n", "\\n").replaceAll("\"", "\\\"")
+                    def replace_reportContent JsonOutput.toJson(reportContent)
                     echo "${replace_reportContent}"
 
                     // Redmine API를 사용하여 이슈 생성

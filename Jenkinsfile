@@ -123,21 +123,8 @@ ${currentBuild.rawBuild.getLog(100)}
 ### SonarQube 분석 결과:
 [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
 """
-/*
-## 빌드 결과: ${buildStatus}
-## SonarQube 품질 게이트: ${sonarQualityGate}
----
 
-### 빌드 로그 (일부):
-${currentBuild.rawBuild.getLog(100)}
----
-
-### SonarQube 분석 결과:
-[SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
-*/
-
-                    //def replace_reportContent = reportContent.replaceAll("\n", "\\n").replaceAll("\"", "\\\"")
-                    def replace_reportContent = JsonOutput.toJson(reportContent)
+                    def replace_reportContent = JsonOutput.toJson(reportContent.replaceAll(",", "\n"))
                     echo "${replace_reportContent}"
 
                     // Redmine API를 사용하여 이슈 생성

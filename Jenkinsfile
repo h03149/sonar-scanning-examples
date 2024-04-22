@@ -123,7 +123,7 @@ pipeline {
                         requestBody: """
                         {
                             "issue": {
-                            "project_id": ${env.REDMINE_PROJECT_ID},
+                            "project_id": 1,
                             "tracker_id": 1, 
                             "status_id": 1, 
                             "priority_id": 4, 

@@ -128,8 +128,7 @@ ${currentBuild.rawBuild.getLog(100)}
                     // Redmine API를 사용하여 이슈 생성
                     
                     def response = httpRequest httpMode: 'POST', 
-                        url: "${env.REDMINE_URL}/issues.json?key=${env.REDMINE_API_KEY}", 
-                        contentType: 'APPLICATION_JSON',
+                        url: "${env.REDMINE_URL}/issues.json?key=${env.REDMINE_API_KEY}",
                         requestBody: """
                         {
                             "issue": {

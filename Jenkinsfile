@@ -122,8 +122,7 @@ ${currentBuild.rawBuild.getLog(100)}
 [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
 """
                     
-                    String replace_reportContent = "asd"
-                    //reportContent.replaceAll(/([\\"])/, '\\\\$1').replaceAll(/\n/, '\n').replaceAll(/\r/, '\r').replaceAll(/\t/, '\t').replaceAll(',', '\n')
+                    String replace_reportContent = reportContent.replaceAll(/([\\"])/, '\\\\$1').replaceAll(/\n/, '\n').replaceAll(/\r/, '\r').replaceAll(/\t/, '\t').replaceAll(',', '\n')
                     echo "${replace_reportContent}"
 
                     // Redmine API를 사용하여 이슈 생성
@@ -134,10 +133,10 @@ ${currentBuild.rawBuild.getLog(100)}
                         requestBody: """
                         {
                             "issue": {
-                                "project_id": 1,
-                                "tracker_id": 1,
-                                "status_id": 1,
-                                "priority_id": 1,
+                                "project_id": 2,
+                                "tracker_id": 5,
+                                "status_id": 10,
+                                "priority_id": 3,
                                 "subject": "[Jenkins Pipeline] Build & SonarQube Report",
                                 "description": "${replace_reportContent}"
                             }

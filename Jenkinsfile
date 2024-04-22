@@ -110,15 +110,7 @@ pipeline {
                     def sonarQualityGate = currentBuild.rawBuild.getLogFile().text.contains("ANALYSIS SUCCESSFUL") ? 'SUCCESS' : 'FAILED'
                     def reportContent = 
 """
-## 빌드 결과: 
-## SonarQube 품질 게이트: 
----
-
-### 빌드 로그 (일부):
----
-
-### SonarQube 분석 결과:
-[SonarQube 링크]
+test
 """
 /*
 ## 빌드 결과: ${buildStatus}

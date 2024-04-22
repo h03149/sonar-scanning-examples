@@ -118,7 +118,7 @@ pipeline {
 
                 redmineIssueTracker(
                     projectKey: 'testproject',
-                    type: 'bug',
+                    type: 'Task',
                     subject: "[Jenkins Pipeline] 빌드 및 SonarQube 분석 보고",
                     description: """
                         ## 빌드 결과: ${currentBuild.result}

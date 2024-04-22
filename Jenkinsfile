@@ -8,6 +8,7 @@ pipeline {
 
         SONAR_HOST_URL = "http://192.168.11.18:9001" // SonarQube 서버 URL
         SONARQUBE_API_KEY = credentials('sonarqube_token')
+        SONAR_PROJECT_KEY = 'MavenModule1Key'
     }
     stages {
         stage('Checkout') {
@@ -23,7 +24,7 @@ pipeline {
                 dir('sonar-scanner-maven/maven-basic') {
                     withSonarQubeEnv('SonarQube Server') {
                         sh '${MVN_HOME}/bin/mvn clean verify sonar:sonar \
-                        -Dsonar.projectKey=MavenModule1Key \
+                        -Dsonar.projectKey="${SONAR_PROJECT_KEY} \
                         -Dsonar.projectName="MavenModule 1" \
                         -Dsonar.plugins.downloadOnlyRequired=true'
                     }
@@ -110,9 +111,11 @@ pipeline {
 ## 빌드 결과: ${buildStatus}
 ## SonarQube 품질 게이트: ${sonarQualityGate}
 ---
+
 ### 빌드 로그 (일부):
 ${currentBuild.rawBuild.getLog(100)}
 ---
+
 ### SonarQube 분석 결과:
 [SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
 """
@@ -129,12 +132,12 @@ ${currentBuild.rawBuild.getLog(100)}
                         requestBody: """
                         {
                             "issue": {
-                            "project_id": 1,
-                            "tracker_id": 1,
-                            "status_id": 1,
-                            "priority_id": 4,
-                            "subject": "[Jenkins Pipeline] Build & SonarQube Report",
-                            "description": "${replace_reportContent}"
+                                "project_id": 1,
+                                "tracker_id": 1,
+                                "status_id": 1,
+                                "priority_id": 4,
+                                "subject": "[Jenkins Pipeline] Build & SonarQube Report",
+                                "description": "${replace_reportContent}"
                             }
                         }
                         """

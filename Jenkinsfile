@@ -35,7 +35,7 @@ pipeline {
             steps {
                 script {
                     echo "Calling saveData with folderName: ${folderName}"
-                    saveData('sonarProject', folderName)
+                    saveData('sonarProject', 'gradle-basic')
 
                     dir("sonar-scanner-gradle/${folderName}") {
                         withSonarQubeEnv('SonarQube Server') {

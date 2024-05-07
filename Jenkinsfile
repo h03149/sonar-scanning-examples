@@ -70,6 +70,8 @@ pipeline {
                 script {
                     build job: 'report_redmine'
                     // 예시 build job: 'B-파이프라인-이름', parameters: [string(name: 'Param1', value: 'Value1')]
+
+                    archiveArtifacts artifacts: 'path/to/artifacts/**', onlyIfSuccessful: true
                 }
             }
         }

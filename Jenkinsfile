@@ -33,19 +33,26 @@ pipeline {
         stage('Sonarqube Scan') {
             steps {
                 script {
-                    // def repoName = getRepoName(env.GIT_URL)
+                    def folderName = "gradle-basic" // 폴더명 지정
+                    DataHandler.saveData('sonarProject', ${folderName})
 
-                    dir('sonar-scanner-gradle/gradle-basic') {
+                    echo "$env.GIT_URL"
+                    echo "$repoName"
+                    dir('sonar-scanner-gradle/${folderName}') {
                         withSonarQubeEnv('SonarQube Server') {
                             sh './gradlew \
+                                -Dsonar.projectKey=${folderName} \
+                                -Dsonar.projectName="${folderName}" \
                                 -Dsonar.plugins.downloadOnlyRequired=true sonar' 
                         }
                     }
 
                     /*
-                    dir('sonar-scanner-maven/maven-basic') {
+                    dir('sonar-scanner-maven/${folderName}') {
                         withSonarQubeEnv('SonarQube Server') {
                             sh '${MVN_HOME}/bin/mvn sonar:sonar \
+                            -Dsonar.projectKey=${folderName} \
+                            -Dsonar.projectName="${folderName}" \
                             -Dsonar.plugins.downloadOnlyRequired=true'
                         }
                     }

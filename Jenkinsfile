@@ -34,7 +34,7 @@ pipeline {
             steps {
                 script {
                     def folderName = "gradle-basic" // 폴더명 지정
-                    DataHandler.saveData('sonarProject', folderName)
+                    saveData('sonarProject', folderName)
 
                     dir("sonar-scanner-gradle/${folderName}") {
                         withSonarQubeEnv('SonarQube Server') {

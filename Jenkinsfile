@@ -35,7 +35,12 @@ pipeline {
             steps {
                 script {
                     echo "Calling saveData with folderName: ${folderName}"
-                    saveData('sonarProject', 'gradle-basic')
+
+                    def directory = new File("/var/jenkins_home/shared_data")
+                    if (!directory.exists()) {
+                        directory.mkdirs()
+                    }
+                    new File(directory, "sonarProject.txt").write(folderName)
 
                     dir("sonar-scanner-gradle/${folderName}") {
                         withSonarQubeEnv('SonarQube Server') {

@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Prepare') {
+            steps {
+                // 필요한 플러그인이 설치되어 있는지 확인
+                script {
+                    // Copy Artifacts Plugin 설치 확인
+                    def plugin = Jenkins.instance.getPluginManager().getPlugin('copyartifact')
+                    if (!plugin || !plugin.isEnabled()) {
+                        error "Copy Artifact Plugin is not installed or enabled"
+                    }
+                }
+            }
+        }
+
+        stage('Get Artifacts') {
+            steps {
+                // github_build 파이프라인에서 아티팩트 복사
+                copyArtifacts(projectName: 'github_build', filter: 'build-results/*.xml', target: 'artifacts/')
+            }
+        }
+
+        stage('Analyze Test Results') {
+            steps {
+                script {
+                    // 아티팩트 디렉토리 내의 XML 파일 읽기
+                    def testResults = readFile 'artifacts/test-results.xml'
+                    // XML을 파싱하여 결과 분석
+                    def parsedResults = new groovy.util.XmlParser().parseText(testResults)
+                    // 결과 출력
+                    echo "Test Cases Executed: ${parsedResults.'**'.findAll{ it.name() == 'testcase'}.size()}"
+                    echo "Failures: ${parsedResults.'**'.findAll{ it.name() == 'failure'}.size()}"
+                }
+            }
+        }
+    }
+}

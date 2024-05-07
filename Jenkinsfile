@@ -65,27 +65,13 @@ pipeline {
             }
         }
 
-/*
         stage('Trigger Redmine Pipeline') {
             steps {
                 script {
-                    def upstreamJobs = ["SonarQube Scan"]
-
-                    def allUpstreamSuccess = upstreamJobs.every { jobName ->
-                        def job = Jenkins.instance.getItemByFullName(jobName)
-                        def lastBuild = job.getLastBuild()
-                        return lastBuild && lastBuild.result == 'SUCCESS'
-                    }
-
-                    if (allUpstreamSuccess) {
-                        build job: 'report_redmine', wait: false
-                        echo "report_redmine 파이프라인 트리거 완료"
-                    } else {
-                        echo "SonarQube Scan 단계가 실패하여 report_redmine 파이프라인을 트리거하지 않습니다."
-                    }
+                    build job: 'report_redmine'
+                    // 예시 build job: 'B-파이프라인-이름', parameters: [string(name: 'Param1', value: 'Value1')]
                 }
             }
         }
-        */
     }
 }

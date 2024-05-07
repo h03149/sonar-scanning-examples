@@ -34,26 +34,24 @@ pipeline {
             steps {
                 script {
                     def folderName = "gradle-basic" // 폴더명 지정
-                    DataHandler.saveData('sonarProject', ${folderName})
+                    DataHandler.saveData('sonarProject', folderName)
 
-                    echo "$env.GIT_URL"
-                    echo "$repoName"
-                    dir('sonar-scanner-gradle/${folderName}') {
+                    dir("sonar-scanner-gradle/${folderName}") {
                         withSonarQubeEnv('SonarQube Server') {
-                            sh './gradlew \
+                            sh "./gradlew \
                                 -Dsonar.projectKey=${folderName} \
-                                -Dsonar.projectName="${folderName}" \
-                                -Dsonar.plugins.downloadOnlyRequired=true sonar' 
+                                -Dsonar.projectName='${folderName}' \
+                                -Dsonar.plugins.downloadOnlyRequired=true sonar"
                         }
                     }
 
                     /*
-                    dir('sonar-scanner-maven/${folderName}') {
+                    dir("sonar-scanner-maven/${folderName}") {
                         withSonarQubeEnv('SonarQube Server') {
-                            sh '${MVN_HOME}/bin/mvn sonar:sonar \
+                            sh "${MVN_HOME}/bin/mvn sonar:sonar \
                             -Dsonar.projectKey=${folderName} \
-                            -Dsonar.projectName="${folderName}" \
-                            -Dsonar.plugins.downloadOnlyRequired=true'
+                            -Dsonar.projectName='${folderName}' \
+                            -Dsonar.plugins.downloadOnlyRequired=true"
                         }
                     }
                     */

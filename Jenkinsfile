@@ -4,6 +4,7 @@ pipeline {
     agent any
     environment {
         MVN_HOME = tool 'Jenkins_Maven_3_9_6'
+        folderName = "gradle-basic"
     }
 
     stages {
@@ -16,7 +17,7 @@ pipeline {
         stage('Build') {
             steps {
                 // Gradle 프로젝트 스캔
-                dir('sonar-scanner-gradle/gradle-basic') {
+                dir("sonar-scanner-gradle/${folderName}") {
                     sh 'chmod +x ./gradlew' // gradlew 실행 권한 부여
                     sh './gradlew clean build'
                 }
@@ -33,7 +34,7 @@ pipeline {
         stage('Sonarqube Scan') {
             steps {
                 script {
-                    def folderName = "gradle-basic" // 폴더명 지정
+                    echo "Calling saveData with folderName: ${folderName}"
                     saveData('sonarProject', folderName)
 
                     dir("sonar-scanner-gradle/${folderName}") {

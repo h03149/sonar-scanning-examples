@@ -2,30 +2,53 @@
 pipeline {
     agent any
     environment {
-        SONAR_HOST_URL = 'http://192.168.56.18:9001' // SonarQube 서버 URL
+        SONAR_HOST_URL = 'http://192.168.35.209:9001' // SonarQube 서버 URL
         SONARQUBE_API_KEY = credentials('sonarqube_token')
     }
     stages {
         stage('sonarqube project report') {
             steps {
                 script {
-                    def sonarResult = httpRequest(
-                        url: "${env.SONAR_HOST_URL}/api/qualitygates/project_status?projectKey=gradle-basic"
+                    def sonarStatus = httpRequest(
+                        url: "${env.SONAR_HOST_URL}/api/qualitygates/project_status?projectKey=gradle-basic",
+                        httpMode: 'GET',
+                        validResponseCodes: '200'
                     )
+                    def sonarStatus_json = readJSON text: sonarStatus.content
+                    def projectStatus = sonarStatus_json.projectStatus.status == "OK" ? "Passed" : "Failed"
+                    echo "projectStatus: ${projectStatus}"
                     
+                    /*
                     def sonarIssues = httpRequest(
-                        url: "${env.SONAR_HOST_URL}/api/issues/search?componets=gradle-basic"
+                        url: "${env.SONAR_HOST_URL}/api/issues/search?componets=gradle-basic",
+                        httpMode: 'GET', 
+                        validResponseCodes: '200'
                     )
+                    */
                     
-                    echo "SonarQube Analysis Result: ${sonarResult.content}"
-                    echo "-------------------------------------------------"
-                    echo "SonarQube Analysis Issues: ${sonarIssues.content}"
-                    echo "-------------------------------------------------"
+                    def sonarResult = httpRequest(
+                        url: "${env.SONAR_HOST_URL}/api/measures/component?component=GradleModule2Key&metricKeys=code_smells&additionalFields=period",
+                        httpMode: 'GET', 
+                        validResponseCodes: '200'
+                    )
+                    def sonarResult_json = readJSON text: sonarResult.content
+                    def codeSmells = sonarResult_json.component.measures.find { it.metric == 'code_smells' }.value
+                    echo "Code Smells: ${codeSmells}"
+                    
+                    //echo "SonarQube Analysis Result: ${sonarResult.content}"
+                    //echo "-------------------------------------------------"
+                    //echo "SonarQube Analysis Issues: ${sonarIssues.content}"
+                    //echo "-------------------------------------------------"
                 }
             }
         }
     }
 }
+
+*/
+
+/*
+
 
 */
 

@@ -1,3 +1,34 @@
+/*
+pipeline {
+    agent any
+    environment {
+        SONAR_HOST_URL = 'http://192.168.56.18:9001' // SonarQube 서버 URL
+        SONARQUBE_API_KEY = credentials('sonarqube_token')
+    }
+    stages {
+        stage('sonarqube project report') {
+            steps {
+                script {
+                    def sonarResult = httpRequest(
+                        url: "${env.SONAR_HOST_URL}/api/qualitygates/project_status?projectKey=gradle-basic"
+                    )
+                    
+                    def sonarIssues = httpRequest(
+                        url: "${env.SONAR_HOST_URL}/api/issues/search?componets=gradle-basic"
+                    )
+                    
+                    echo "SonarQube Analysis Result: ${sonarResult.content}"
+                    echo "-------------------------------------------------"
+                    echo "SonarQube Analysis Issues: ${sonarIssues.content}"
+                    echo "-------------------------------------------------"
+                }
+            }
+        }
+    }
+}
+
+*/
+
 pipeline {
     agent any
 

@@ -1,4 +1,5 @@
 /*
+//소나큐브 내용 가져오는 소스
 pipeline {
     agent any
     environment {
@@ -47,9 +48,164 @@ pipeline {
 
 */
 
+/* 
+// 빌드 정보 가져오는 소스
+pipeline {
+    agent any
+    stages {
+        stage('Get Gradle_Sonar_Jenkins Pipeline Info') {
+            steps {
+                script {
+                    // A 파이프라인 이름
+                    def aPipelineName = "github_build" 
+
+                    // Jenkins 객체 가져오기
+                    def jenkins = Jenkins.getInstance()
+
+                    // A 파이프라인 객체 가져오기
+                    def aPipeline = jenkins.getItemByFullName(aPipelineName)
+
+                    // 마지막 빌드 객체 가져오기
+                    def lastBuild = aPipeline.getLastBuild()
+                    
+
+                    // 빌드 정보 추출
+                    def buildNumber = lastBuild.number
+                    def buildResult = lastBuild.result
+                    def duration = lastBuild.durationString
+                    
+                    // 시작 시간을 Calendar 객체에서 SimpleDateFormat을 사용하여 포맷팅
+                    def fmt = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                    def buildTime = fmt.format(lastBuild.timestamp.time)
+
+                    // 정보 출력
+                    echo "A 파이프라인 정보 (빌드 #${buildNumber}):"
+                    echo "- 실행 결과: ${buildResult}"
+                    echo "- 소요 시간: ${duration}"
+                    echo "- 최종 결과: ${buildResult}" // buildResult는 이미 최종 결과를 나타냄 
+                    echo "- 시작 시간: ${buildTime}"
+                }
+            }
+        }
+    }
+}
+
+/// 참고
+getNumber():
+빌드 번호를 반환합니다.
+getResult():
+빌드 결과를 반환합니다. 결과는 SUCCESS, FAILURE, ABORTED, UNSTABLE, NOT_BUILT 등이 될 수 있습니다.
+getDuration():
+빌드가 실행된 시간(밀리초)을 반환합니다.
+getDurationString():
+빌드 기간을 읽기 쉬운 문자열 형태로 반환합니다. 예를 들어, "3 min 40 sec"과 같은 형식입니다.
+getDisplayName():
+사용자 정의 또는 기본 빌드 이름을 반환합니다.
+getDescription():
+빌드에 대한 설명을 반환합니다.
+getTimestamp():
+빌드가 시작된 시간을 Calendar 객체로 반환합니다.
+getStartTimeInMillis():
+빌드가 시작된 시간을 밀리초 단위의 타임스탬프로 반환합니다.
+getPreviousBuild():
+이 빌드 바로 이전의 빌드를 반환합니다.
+getNextBuild():
+이 빌드 바로 다음의 빌드를 반환합니다.
+getBuiltOn():
+빌드가 실행된 노드를 반환합니다.
+getChangeSets():
+빌드에 포함된 변경 사항 목록을 반환합니다. 이는 SCM에서 가져온 변경 로그를 포함할 수 있습니다.
+getArtifacts():
+빌드에서 생성된 아티팩트 목록을 반환합니다.
+isBuilding():
+빌드가 현재 진행 중인지 여부를 나타냅니다.
+getUrl():
+빌드의 Jenkins 내 URL을 반환합니다.
+///
+
+*/
+
 /*
+// report redmine 예시는 위 내용들로 다 수정하면 됨.
+environment {
+        MVN_HOME = tool 'Jenkins_Maven_3_9_6'  // Jenkins에서 설정한 Maven 설치의 이름입니다.
+        REDMINE_URL = 'http://192.168.11.18:3000'
+//집        REDMINE_URL = 'http://192.168.35.209:3000'
+        REDMINE_API_KEY = credentials('redmine-api-key')
+        REDMINE_PROJECT_ID = 'testproject'
 
+        SONAR_HOST_URL = "http://192.168.11.18:9001" // SonarQube 서버 URL
+//집        SONAR_HOST_URL = "http://192.168.35.209:9001" // SonarQube 서버 URL
+        SONARQUBE_API_KEY = credentials('sonarqube_token')
+//        SONAR_PROJECT_KEY = 'MavenModule1Key'
+    }
 
+stage('Redmine 보고') {
+            steps {
+                script {
+                    def buildStatus = currentBuild.rawBuild.getLogFile().text.contains("BUILD SUCCESSFUL") ? 'SUCCESS' : 'FAILED'
+
+                    echo "${buildStatus}"
+
+                    //def sonarQualityGate = currentBuild.rawBuild.getLog(100).find { it =~ /ANALYSIS SUCCESSFUL/ } != null ? 'SUCCESS' : 'FAILED'
+                    def sonarQualityGate = currentBuild.rawBuild.getLogFile().text.contains("ANALYSIS SUCCESSFUL") ? 'SUCCESS' : 'FAILED'
+                    def reportContent = 
+"""
+## 빌드 결과: ${buildStatus}
+## SonarQube 품질 게이트: ${sonarQualityGate}
+
+---
+### 빌드 로그 (일부):
+${currentBuild.rawBuild.getLog(100)}
+
+---
+### SonarQube 분석 결과:
+[SonarQube 링크](${env.SONAR_HOST_URL}/dashboard?id=${env.SONAR_PROJECT_KEY})
+"""
+
+                    def replace_reportContent = JsonOutput.toJson(reportContent.replaceAll(",", "\n"))
+                    echo "${replace_reportContent}"
+
+                    // Redmine API를 사용하여 이슈 생성
+                    
+                    def response = httpRequest httpMode: 'POST', 
+                        url: "${env.REDMINE_URL}/issues.json?key=${env.REDMINE_API_KEY}", 
+                        contentType: 'APPLICATION_JSON',
+                        requestBody: """
+                        {
+                            "issue": {
+                                "project_id": 1,
+                                "tracker_id": 1,
+                                "status_id": 1,
+                                "priority_id": 4,
+                                "subject": "[Jenkins Pipeline] Build & SonarQube Report",
+                                "description": ${replace_reportContent}
+                            }
+                        }
+                        """
+
+/*
+집
+"""
+                        {
+                            "issue": {
+                                "project_id": 2,
+                                "tracker_id": 5,
+                                "status_id": 10,
+                                "priority_id": 3,
+                                "subject": "[Jenkins Pipeline] Build & SonarQube Report",
+                                "description": ${replace_reportContent}
+                            }
+                        }
+                        """
+*/
+
+                    if (response.status != 201) {
+                        error "Redmine 이슈 생성 실패: ${response.content}"
+                    }
+                }
+            }
+        }
 */
 
 pipeline {

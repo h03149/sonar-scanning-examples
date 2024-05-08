@@ -1,5 +1,3 @@
-@Library('jenkins_option@main') _
-
 pipeline {
     agent any
     environment {
@@ -68,7 +66,7 @@ pipeline {
         stage('Trigger Redmine Pipeline') {
             steps {
                 script {
-                    archiveArtifacts artifacts: 'path/to/artifacts/**', onlyIfSuccessful: true
+                    // archiveArtifacts artifacts: 'path/to/artifacts/**', onlyIfSuccessful: true
                     
                     build job: 'report_redmine', wait: false
                     // 예시 build job: 'B-파이프라인-이름', parameters: [string(name: 'Param1', value: 'Value1')]

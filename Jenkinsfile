@@ -29,20 +29,6 @@ pipeline {
             }
         }
 
-        stage('Pre-Test Delay') {
-            steps {
-                // 딜레이 추가, 예를 들어 60초 대기
-                sleep(60)
-            }
-        }
-        stage('Test') {
-            steps {
-                dir("sonar-scanner-gradle/${folderName}") {
-                    sh './gradlew test' // 별도로 test 실행
-                }
-            }
-        }
-
         stage('Sonarqube Scan') {
             steps {
                 script {

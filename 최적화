@@ -1,0 +1,36 @@
+Docker Memory 상향
+- 보통 메모리는 PC의 50%만 할당됨
+
+1. Docker 종료
+2. 파일브라우저 > %USERPROFILE%
+3. ".wslconfig" 파일 생성
+  [wsl2]
+  memory=XGB
+- X는 개인 PC 사양에 맞게 조정
+4. CMD > wsl --shutdown
+- wsl 재시작
+5. Docker 재실행
+
+> 가용 메모리가 설정에 맞게 조정된걸 확인 할 수 있따.
+
+Docker Image 정리(성능 향상에 조금 도움 됨)
+1. Powershell > docekr images
+- 실행 중인 이미지 확인
+2. Powershell > docker system prune -a
+- 실행 시 아래 여러 조건의 내용이 삭제된다고 동의 시 y 를 누르라고 함
+3. y
+- 실행 시 스페이스 확보된 용량 표기 됨
+  
+  
+Linux Cache 메모리 제거 및 스케쥴
+- Linux는 Cache 메모리가 계속 쌓여서 Docker에 가용 메모리가 점점 부족해지는 현상이 발생한다.
+1. Powershell > wsl ~
+- linux에 접근
+2. DESKTOP-xxxx:~# sync && echo 3 > /proc/sys/vm/drop_caches
+- 캐시 메모리 정리
+3. crontab -e
+- 해당 동작 스케쥴 화
+4. i 입력하여 편집 모드 진입
+5. 0  *  *  *  *  sysc && echo 3 > /proc/sys/vm/drop_caches
+- 상기 내용 추가 1시간 마다 정리하겠다는 스케쥴
+6. :wq 로 저장 및 종료

@@ -17,7 +17,7 @@ pipeline {
                 // Gradle 프로젝트 스캔
                 dir("sonar-scanner-gradle/${folderName}") {
                     sh 'chmod +x ./gradlew' // gradlew 실행 권한 부여
-                    sh './gradlew --daemon clean build'
+                    sh './gradlew --daemon clean build -x test'
                 }
 
                 /*
@@ -26,6 +26,20 @@ pipeline {
                     sh '${MVN_HOME}/bin/mvn clean verify'
                 }
                 */
+            }
+        }
+
+        stage('Pre-Test Delay') {
+            steps {
+                // 딜레이 추가, 예를 들어 60초 대기
+                sleep(60)
+            }
+        }
+        stage('Test') {
+            steps {
+                dir("sonar-scanner-gradle/${folderName}") {
+                    sh './gradlew test' // 별도로 test 실행
+                }
             }
         }
 

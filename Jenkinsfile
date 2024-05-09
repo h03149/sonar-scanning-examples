@@ -29,13 +29,6 @@ pipeline {
             }
         }
 
-        stage('Sonarqube Scan Delay') {
-            steps {
-                // 딜레이 추가, 예를 들어 60초 대기
-                sleep(30)
-            }
-        }
-
         stage('Sonarqube Scan') {
             steps {
                 script {

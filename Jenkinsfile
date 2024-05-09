@@ -17,7 +17,7 @@ pipeline {
                 // Gradle 프로젝트 스캔
                 dir("sonar-scanner-gradle/${folderName}") {
                     sh 'chmod +x ./gradlew' // gradlew 실행 권한 부여
-                    sh './gradlew --daemon clean build -x test'
+                    sh './gradlew clean build'
                 }
 
                 /*
